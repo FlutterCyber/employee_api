@@ -2,8 +2,11 @@ import 'dart:convert';
 
 import 'package:employee_api/model/employee.dart';
 import 'package:http/http.dart';
+import 'package:logger/logger.dart';
 
 class NetworkService {
+  static var logger = Logger();
+
   static String BASE = "dummy.restapiexample.com";
   static Map<String, String> header = {};
 
@@ -49,8 +52,8 @@ class NetworkService {
     Response response = await delete(uri, headers: header);
   }
 
-  static Map<String, String> paramsGET() {
-    Map<String, String> params = {};
+  static Map<String, dynamic> paramsGET() {
+    Map<String, dynamic> params = {};
     return params;
   }
 
@@ -77,9 +80,11 @@ class NetworkService {
     return params;
   }
 
-  static  parsingResponse(String response) {
+  static parsingResponse(String response) {
     dynamic json = jsonDecode(response);
-    var data = json.map((e) => EmployeeResponse.fromJson(e));
-    return data;
+    List<Employee> employees = List<Employee>.from(
+        json['data'].map((employee) => Employee.fromJson(employee)));
+    logger.i(employees.runtimeType);
+    return employees;
   }
 }
